@@ -1,0 +1,14 @@
+<div>
+  <div>Next Player: <span>{{currentPlayer}}</span></div>
+  <div>Winner: <span>{{winner}}</span></div>
+  <button (click)="reset()">reset</button>
+  <section>
+    <div class="row" *ngFor="let row of board; let i = index">
+      <button *ngFor="let col of row; let j = index" (click)="move(i,j)" class="square"
+      [disabled]="winner !=='None'">
+        {{col}}
+      </button>
+    </div>
+  </section>
+</div>
+<router-outlet></router-outlet>
