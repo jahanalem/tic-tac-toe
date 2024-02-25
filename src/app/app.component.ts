@@ -11,28 +11,31 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent implements OnInit {
   title = 'tic-tac-toe';
-  board: (string | null)[][];
+  board: (string | null)[][] = [];
   currentPlayer: string = 'X';
   winner: string = 'None';
+  boardSize: number = 9;
 
   constructor() {
-    this.board = [
-      [null, null, null],
-      [null, null, null],
-      [null, null, null]
-    ];
+    this.initializeBoard(this.boardSize);
   }
 
   ngOnInit(): void {
     this.reset();
   }
 
+  initializeBoard(size: number) {
+    this.board = [];
+    for (let i = 0; i < size; i++) {
+      this.board[i] = [];
+      for (let j = 0; j < size; j++) {
+        this.board[i][j] = null;
+      }
+    }
+  }
+
   reset() {
-    this.board = [
-      [null, null, null],
-      [null, null, null],
-      [null, null, null]
-    ];
+    this.initializeBoard(this.boardSize);
     this.currentPlayer = 'X';
     this.winner = 'None';
   }
@@ -40,7 +43,7 @@ export class AppComponent implements OnInit {
   move(row: number, col: number) {
     if (!this.board[row][col] && this.winner === 'None') {
       this.board[row][col] = this.currentPlayer;
-      if (this.checkWin()) {
+      if (this.checkWhoWin('X') || this.checkWhoWin('O')) {
         this.winner = this.currentPlayer;
       }
       else {
@@ -49,29 +52,68 @@ export class AppComponent implements OnInit {
     }
   }
 
-  checkWin(): boolean {
-    for (let i = 0; i < 3; i++) {
-      if (this.board[i][0] != null &&
-        this.board[i][0] === this.board[i][1] &&
-        this.board[i][1] === this.board[i][2]) {
+  checkWhoWin(player: string): boolean {
+    let won = false;
+    for (let i = 0; i < this.boardSize; i++) {
+      won = false;
+      for (let j = 0; j < this.boardSize; j++) {
+        if (this.board[i][j] != null && this.board[i][j] === player) {
+          won = true;
+        }
+        else {
+          won = false;
+          break;
+        }
+      }
+      if (won) {
         return true;
       }
-      if (this.board[0][i] != null &&
-        this.board[0][i] === this.board[1][i] &&
-        this.board[1][i] === this.board[2][i]) {
+    }
+
+    for (let i = 0; i < this.boardSize; i++) {
+      won = false;
+      for (let j = 0; j < this.boardSize; j++) {
+        if (this.board[j][i] != null && this.board[j][i] === player) {
+          won = true;
+        }
+        else {
+          won = false;
+          break;
+        }
+      }
+      if (won) {
         return true;
       }
     }
-    if (this.board[0][0] != null &&
-      this.board[0][0] === this.board[1][1] &&
-      this.board[1][1] === this.board[2][2]) {
+
+    for (let i = 0; i < this.boardSize; i++) {
+      won = false;
+      if (this.board[i][i] != null && this.board[i][i] === player) {
+        won = true;
+      }
+      else {
+        won = false;
+        break;
+      }
+    }
+    if (won) {
       return true;
     }
-    if (this.board[0][2] != null &&
-      this.board[0][2] === this.board[1][1] &&
-      this.board[1][1] === this.board[2][0]) {
+
+    for (let i = 0; i < this.boardSize; i++) {
+      won = false;
+      if (this.board[i][this.boardSize - 1 - i] != null && this.board[i][this.boardSize - 1 - i] === player) {
+        won = true;
+      }
+      else {
+        won = false;
+        break;
+      }
+    }
+    if (won) {
       return true;
     }
+
     return false;
   }
 }
